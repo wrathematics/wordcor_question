@@ -23,7 +23,7 @@ My confusion seems to be with what constitutes a `grouping.var`:
 
 ```{r}
 word_cor(alice, word="the", r=0.00001)
-word_cor(alice, grouping.var=c("she", "said", "the"))
+word_cor(alice, grouping.var=c("she", "said", "the"), word="the", r=0.00001)
 word_cor(alice, grouping.var=spaste(freq_terms(alice)), word="the", r=.00001)
 ```
 
