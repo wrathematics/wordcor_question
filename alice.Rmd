@@ -1,0 +1,30 @@
+---
+title: 'qdap word_cor'
+output: pdf_document
+---
+
+```{r, echo=FALSE}
+library(knitr)
+opts_knit$set(stop_on_error = FALSE)
+```
+
+```{r}
+suppressPackageStartupMessages(library(tm))
+suppressPackageStartupMessages(library(qdap))
+
+alice <- readRDS("alice.rda")
+
+class(alice)
+
+head(freq_terms(alice))
+```
+
+My confusion seems to be with what constitutes a `grouping.var`:
+
+```{r}
+word_cor(alice, word="the", r=0.00001)
+word_cor(alice, grouping.var=c("she", "said", "the"))
+word_cor(alice, grouping.var=spaste(freq_terms(alice)), word="the", r=.00001)
+```
+
+???
