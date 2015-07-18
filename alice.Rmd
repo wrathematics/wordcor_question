@@ -8,23 +8,37 @@ library(knitr)
 opts_knit$set(stop_on_error = FALSE)
 ```
 
+
+You can't use qdap functions on a `Corpus` this way.  Typically qdap functions will work on a `Corpus` if you use them instid `apply_as_df`, however, in this cas the internals of `word_cor` is different enough that it can't just be put inside `apply_as_df` without me making some changes to the function.  Here I convert `alice` to a `data.frame` instead.
+
 ```{r}
-suppressPackageStartupMessages(library(tm))
-suppressPackageStartupMessages(library(qdap))
+pacman::p_install_gh("trinker/qdap")
+pacman::p_load(tm, qdap)
 
 alice <- readRDS("alice.rda")
 
 class(alice)
 
-head(freq_terms(alice))
+dat <- sentSplit(as.data.frame(alice), "text")
+head(with(dat, freq_terms(text)))
 ```
 
-My confusion seems to be with what constitutes a `grouping.var`:
+> My confusion seems to be with what constitutes a `grouping.var`:
+
+I think this will help.  
 
 ```{r}
-word_cor(alice, word="the", r=0.00001)
-word_cor(alice, grouping.var=c("she", "said", "the"), word="the", r=0.00001)
-word_cor(alice, grouping.var=spaste(freq_terms(alice)), word="the", r=.00001)
+dat$id <- qdapTools::id(dat)
+with(dat, word_cor(text, word="the", r = .01))
+with(dat, word_cor(text, tot, word="the", r = .01))
+
+with(dat, word_cor(text, word=c("she", "said", "the"), r = .3))
+with(dat, word_cor(text, word=c("she", "said", "the"), r = NULL))
+
+with(dat, word_cor(text, word=freq_terms(alice)[["WORD"]], r = .2))
+with(dat, word_cor(text, word=freq_terms(alice)[["WORD"]], r = NULL))
 ```
 
-???
+
+
+
